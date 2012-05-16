@@ -41,7 +41,6 @@ binary-arch:
 binary-indep: build-indep
 	dh_testdir -i
 	dh_testroot -i
-	dh_prep -i
 	dh_installdirs -i
 	dh_install -i
 	dh_installdocs -i
