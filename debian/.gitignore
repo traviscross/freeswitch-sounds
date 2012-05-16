@@ -1,0 +1,6 @@
+# gitignore
+/files
+/*.log
+/*.substvars
+/freeswitch-*/
+/tmp/
