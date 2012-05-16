@@ -27,9 +27,9 @@ binary-indep:
 	dh_md5sums -i
 	dh_builddeb -i
 
+build: build-indep
 build-arch:
-build-indep:
-build:
+build-indep: all
 
 define defdir
 $(DESTDIR)/$(spath)/%/$(1): $(spath)/%/$(srate)
