@@ -15,7 +15,6 @@ binary-indep:
 	dh_testroot -i
 	dh_prep -i
 	dh_installdirs -i
-	dh_auto_install -i
 	dh_install -i
 	dh_installdocs -i
 	dh_installchangelogs -i
