@@ -1,9 +1,9 @@
 # gitignore
-/control
-/files
 /*.install
 /*.lintian-overrides
 /*.log
 /*.substvars
+/control
+/files
 /freeswitch-*/
 /tmp/
