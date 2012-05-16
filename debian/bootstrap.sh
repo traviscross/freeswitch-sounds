@@ -57,6 +57,14 @@ list_pkgs () {
   echo "${pkgs:1}"
 }
 
+list_all_pkgs () {
+  local xs=""
+  for x in $(list_pkgs) "$base-$sound"; do
+    xs="$xs $x"
+  done
+  echo "${xs:1}"
+}
+
 fmt_depends () {
   local deps=""
   for x in $(list_pkgs); do
@@ -180,7 +188,7 @@ fmt_pkg_overrides () {
 }
 
 gen_overrides () {
-  for x in $(list_pkgs); do
+  for x in $(list_all_pkgs); do
     fmt_pkg_overrides "$x" > $x.lintian-overrides
   done
 }
