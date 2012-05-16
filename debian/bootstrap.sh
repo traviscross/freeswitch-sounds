@@ -190,10 +190,20 @@ ${p}: package-has-long-file-name *
 EOF
 }
 
+fmt_upstream_changelog_override () {
+  local p="$1"
+  cat <<EOF
+# There is no upstream changelog associated with this package.
+${p}: no-upstream-changelog
+
+EOF
+}
+
 fmt_pkg_overrides () {
   fmt_edit_warning
   fmt_itp_override "$@"
   fmt_long_filename_override "$@"
+  fmt_upstream_changelog_override "$@"
 }
 
 gen_overrides () {
