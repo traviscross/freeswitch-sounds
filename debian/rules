@@ -4,13 +4,41 @@
 
 #export DH_VERBOSE=1
 
+#### vars
+
 DESTDIR ?= debian/tmp/usr/share/freeswitch/sounds
 spath := en/us/callie
 srate := 48000
+rates := 8000 16000 32000 48000
+
+all: binary
+
+#### build sounds
+
+dirs := $(wildcard $(spath)/*)
+sdirs := $(addsuffix /$(srate), $(dirs))
+ddirs := $(addprefix $(DESTDIR)/,$(foreach rate,$(rates),$(addsuffix /$(rate), $(dirs))))
+sfiles := $(foreach dir,$(sdirs),$(wildcard $(dir)/*.wav))
+dfiles := $(addprefix $(DESTDIR)/,$(foreach rate,$(rates),$(subst /$(srate)/,/$(rate)/,$(sfiles))))
+
+define defdir
+$(DESTDIR)/$(spath)/%/$(1): $(spath)/%/$(srate)
+	mkdir -p $$@
+endef
+
+define deffile
+$(DESTDIR)/$(subst /$(srate)/,/$(2)/,$(1)): $(1) $(DESTDIR)/$(dir $(subst /$(srate)/,/$(2)/,$(1)))
+	sox $$< -r$(2) $$@
+endef
+
+$(foreach rate,$(rates),$(eval $(call defdir,$(rate))))
+$(foreach rate,$(rates),$(foreach snd,$(sfiles),$(eval $(call deffile,$(snd),$(rate)))))
+
+#### debian
 
 binary: binary-indep
 binary-arch:
-binary-indep:
+binary-indep: build-indep
 	dh_testdir -i
 	dh_testroot -i
 	dh_prep -i
@@ -29,29 +57,7 @@ binary-indep:
 
 build: build-indep
 build-arch:
-build-indep: all
-
-define defdir
-$(DESTDIR)/$(spath)/%/$(1): $(spath)/%/$(srate)
-	mkdir -p $$@
-endef
-
-define deffile
-$(DESTDIR)/$(subst /$(srate)/,/$(2)/,$(1)): $(1) $(DESTDIR)/$(dir $(subst /$(srate)/,/$(2)/,$(1)))
-	sox $$< -r$(2) $$@
-endef
-
-rates := 8000 16000 32000 48000
-dirs := $(wildcard $(spath)/*)
-sdirs := $(addsuffix /$(srate), $(dirs))
-ddirs := $(addprefix $(DESTDIR)/,$(foreach rate,$(rates),$(addsuffix /$(rate), $(dirs))))
-sfiles := $(foreach dir,$(sdirs),$(wildcard $(dir)/*.wav))
-dfiles := $(addprefix $(DESTDIR)/,$(foreach rate,$(rates),$(subst /$(srate)/,/$(rate)/,$(sfiles))))
-
-$(foreach rate,$(rates),$(eval $(call defdir,$(rate))))
-$(foreach rate,$(rates),$(foreach snd,$(sfiles),$(eval $(call deffile,$(snd),$(rate)))))
-
-all: $(dfiles)
+build-indep: $(dfiles)
 
 clean:
 	dh_testdir
