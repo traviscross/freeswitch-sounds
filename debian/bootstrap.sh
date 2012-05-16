@@ -65,6 +65,15 @@ list_all_pkgs () {
   echo "${xs:1}"
 }
 
+list_vpkgs () {
+  local vs="$base" vb="$base"
+  for x in ${sound//-/ }; do
+    vb="$vb-$x"
+    vs="$vs $vb"
+  done
+  echo "${vs:1}"
+}
+
 fmt_depends () {
   local deps=""
   for x in $(list_pkgs); do
