@@ -1,7 +1,60 @@
 #!/usr/bin/make -f
 # -*- mode:makefile -*-
+##### Author: Travis Cross <tc@traviscross.com>
+
 #export DH_VERBOSE=1
 
-%:
-        dh $@
+DESTDIR ?= debian/tmp/usr/share/freeswitch/sounds
+spath := en/us/callie
+srate := 48000
+
+binary: binary-indep
+binary-arch:
+binary-indep:
+	dh_testdir -i
+	dh_testroot -i
+	dh_prep -i
+	dh_installdirs -i
+	dh_auto_install -i
+	dh_install -i
+	dh_installdocs -i
+	dh_installchangelogs -i
+	dh_install -i
+	dh_lintian -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+build-arch:
+build-indep:
+build:
+
+define defdir
+$(DESTDIR)/$(spath)/%/$(1): $(spath)/%/$(srate)
+	mkdir -p $$@
+endef
+
+define deffile
+$(DESTDIR)/$(subst /$(srate)/,/$(2)/,$(1)): $(1) $(DESTDIR)/$(dir $(subst /$(srate)/,/$(2)/,$(1)))
+	sox $$< -r$(2) $$@
+endef
+
+rates := 8000 16000 32000 48000
+dirs := $(wildcard $(spath)/*)
+sdirs := $(addsuffix /$(srate), $(dirs))
+ddirs := $(addprefix $(DESTDIR)/,$(foreach rate,$(rates),$(addsuffix /$(rate), $(dirs))))
+sfiles := $(foreach dir,$(sdirs),$(wildcard $(dir)/*.wav))
+dfiles := $(addprefix $(DESTDIR)/,$(foreach rate,$(rates),$(subst /$(srate)/,/$(rate)/,$(sfiles))))
+
+$(foreach rate,$(rates),$(eval $(call defdir,$(rate))))
+$(foreach rate,$(rates),$(foreach snd,$(sfiles),$(eval $(call deffile,$(snd),$(rate)))))
+
+all: $(dfiles)
+
+clean:
+	dh_testdir
+	dh_clean
 
