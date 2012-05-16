@@ -12,6 +12,10 @@ rates_hz=$(echo "$rates" | sed -e 's/[^ ]*://g')
 
 #### lib
 
+ddir="."
+[ -n "${0%/*}" ] && ddir="${0%/*}"
+cd $ddir
+
 err () {
   echo "$0 error: $1" >&2
   exit 1
