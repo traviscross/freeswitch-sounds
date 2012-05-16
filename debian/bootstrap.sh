@@ -98,7 +98,7 @@ Source: freeswitch-sounds-$sound
 Section: comm
 Priority: optional
 Maintainer: Travis Cross <tc@traviscross.com>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: debhelper (>= 8.0.0), sox
 Standards-Version: 3.9.3
 Homepage: http://files.freeswitch.org/
 
