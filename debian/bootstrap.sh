@@ -142,14 +142,17 @@ gen_overrides () {
 
 tmpl () {
   sed \
+    -e "s:__RATE__:${rate}:" \
+    -e "s:__PATH__:${path}:" \
     -e "s:__SPATH__:/usr/share/freeswitch/sounds/${path}:" \
     "$1.tmpl" > "$1"
 }
 
 tmpl_files () {
-  for x in postinst prerm; do
+  for x in postinst prerm rules; do
     tmpl $x
   done
+  chmod +x rules
 }
 
 #### main
