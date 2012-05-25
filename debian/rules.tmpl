@@ -9,6 +9,8 @@
 DESTDIR ?= debian/tmp/usr/share/freeswitch/sounds
 spath := __PATH__
 srate := __RATE__
+ver := __VERSION__
+pkg := __PKG_NAME__
 rates := 48000
 
 all: binary
@@ -56,6 +58,15 @@ binary-indep: build-indep
 build: build-indep
 build-arch:
 build-indep: $(dfiles)
+
+get-orig-source:
+	$(eval tmpdir := $(shell mktemp -d --tmpdir=.))
+	wget -O $(tmpdir)/upstream.tgz "http://files.freeswitch.org/$(pkg)-$(srate)-$(ver).tar.gz"
+	mkdir -p $(tmpdir)/$(pkg)-$(ver)
+	tar -x -C $(tmpdir)/$(pkg)-$(ver) -f $(tmpdir)/upstream.tgz
+	tar -c -C $(tmpdir) -f $(pkg)_$(ver).orig.tar $(pkg)-$(ver)
+	xz -9ev $(pkg)_$(ver).orig.tar
+	rm -rf $(tmpdir)
 
 clean:
 	dh_testdir

@@ -7,6 +7,7 @@ sound="en-us-callie"
 path="en/us/callie"
 sound_name="US English Callie"
 rate="48000"
+version="1.0.18"
 
 #### lib
 
@@ -143,8 +144,10 @@ gen_overrides () {
 tmpl () {
   sed \
     -e "s:__RATE__:${rate}:" \
+    -e "s:__PKG_NAME__:${base}-${sound}:" \
     -e "s:__PATH__:${path}:" \
     -e "s:__SPATH__:/usr/share/freeswitch/sounds/${path}:" \
+    -e "s:__VERSION__:${version}:" \
     "$1.tmpl" > "$1"
 }
 
