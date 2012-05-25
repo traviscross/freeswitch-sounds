@@ -1,0 +1,32 @@
+#!/bin/sh
+##### -*- mode:shell-script; indent-tabs-mode:nil; sh-basic-offset:2 -*-
+##### Author: Travis Cross <tc@traviscross.com>
+
+set -e
+
+spath=__SPATH__
+
+case "$1" in
+  configure)
+    for r in 8000 16000 32000; do
+      echo "Generating sounds at $r Hz..." >&2
+      for d in $spath/*; do
+        [ -d $d ] || continue
+        mkdir $d/$r
+        for f in $d/48000/*.wav; do
+          [ -f $f ] || continue
+          sox $f -r$r $d/$r/${f##*/}
+        done
+      done
+    done
+    ;;
+  abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+  *)
+    echo "postinst called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+#DEBHELPER#
+exit 0

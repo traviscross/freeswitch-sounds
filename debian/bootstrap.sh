@@ -6,9 +6,7 @@ base="freeswitch-sounds"
 sound="en-us-callie"
 path="en/us/callie"
 sound_name="US English Callie"
-rates="8k:8000 16k:16000 32k:32000 48k:48000"
-rates_names=$(echo "$rates" | sed -e 's/:[^ ]*//g')
-rates_hz=$(echo "$rates" | sed -e 's/[^ ]*://g')
+rate="48000"
 
 #### lib
 
@@ -30,14 +28,6 @@ xread () {
   return $ret
 }
 
-reverse () {
-  local acc=""
-  for x in $1; do
-    acc="$x $acc"
-  done
-  echo "${acc:0:$((${#acc}-1))}"
-}
-
 wrap () {
   local fl=true
   echo "$1" | fold -s -w 69 | while xread l; do
@@ -57,59 +47,9 @@ fmt_edit_warning () {
 
 #### control
 
-list_pkgs () {
-  local pkgs=""
-  for x in $rates_names; do
-    pkgs="$pkgs $base-$sound-$x"
-  done
-  echo "${pkgs:1}"
-}
-
-list_all_pkgs () {
-  local xs=""
-  for x in $(list_pkgs) "$base-$sound"; do
-    xs="$xs $x"
-  done
-  echo "${xs:1}"
-}
-
-list_vpkgs () {
-  local vs="$base" vb="$base"
-  for x in ${sound//-/ }; do
-    vb="$vb-$x"
-    vs="$vs $vb"
-  done
-  echo "${vs:1}"
-}
-
-fmt_depends () {
-  local deps=""
-  for x in $(reverse "$(list_pkgs)"); do
-    deps="$deps | $x (= \${binary:Version})"
-  done
-  echo "${deps:3}"
-}
-
-fmt_recommends () {
-  local recs=""
-  for x in $(list_pkgs); do
-    recs="$recs, $x (= \${binary:Version})"
-  done
-  echo "${recs:2}"
-}
-
 fmt_provides () {
   local pvds="$base" tmp="${sound%-*}" tb="$base"
   for x in ${tmp//-/ }; do
-    tb="$tb-$x"
-    pvds="$pvds, $tb"
-  done
-  echo "$pvds"
-}
-
-fmt_provides_full () {
-  local pvds="$base" tb="$base"
-  for x in ${sound//-/ }; do
     tb="$tb-$x"
     pvds="$pvds, $tb"
   done
@@ -130,27 +70,9 @@ Homepage: http://files.freeswitch.org/
 Package: $base-$sound
 $(wrap "Provides: $(fmt_provides)")
 Architecture: all
-Depends: \${misc:Depends},
- $(wrap "$(fmt_depends)")
-Recommends:
- $(wrap "$(fmt_recommends)")
+Depends: \${misc:Depends}, sox
 Description: $sound_name sounds for FreeSWITCH
- $(wrap "This is a metapackage which depends on the $sound_name sound packages for FreeSWITCH at various sampling rates.")
-
-EOF
- for x in $(list_pkgs); do fmt_pkg_control "$x"; done
-}
-
-fmt_pkg_control () {
-  local pkg="$1"
-  local rate="${1##*-}"
-  cat <<EOF
-Package: $pkg
-$(wrap "Provides: $(fmt_provides_full)")
-Architecture: all
-Depends: \${misc:Depends}
-Description: ${sound_name} sounds for FreeSWITCH at ${rate}Hz
- $(wrap "This package contains the ${sound_name} sounds for FreeSWITCH at a sampling rate of ${rate}Hz.")
+ $(wrap "This package contains the ${sound_name} sounds for FreeSWITCH.")
 
 EOF
 }
@@ -162,18 +84,14 @@ gen_control () {
 #### install
 
 fmt_pkg_install () {
-  local rate="$1"
   fmt_edit_warning
   cat <<EOF
-/usr/share/freeswitch/sounds/${path}/*/${rate}
+/usr/share/freeswitch/sounds/${path}
 EOF
 }
 
 gen_install () {
-  for x in $rates; do
-    local n="${x%%:*}" r="${x##*:}"
-    fmt_pkg_install $r > $base-$sound-$n.install
-  done
+  fmt_pkg_install > $base-$sound.install
 }
 
 #### overrides
@@ -215,12 +133,29 @@ fmt_pkg_overrides () {
 }
 
 gen_overrides () {
-  for x in $(list_all_pkgs); do
+  for x in "$base-$sound"; do
     fmt_pkg_overrides "$x" > $x.lintian-overrides
   done
 }
 
+#### templated files
+
+tmpl () {
+  sed \
+    -e "s:__SPATH__:/usr/share/freeswitch/sounds/${path}:" \
+    "$1.tmpl" > "$1"
+}
+
+tmpl_files () {
+  for x in postinst prerm; do
+    tmpl $x
+  done
+}
+
+#### main
+
 gen_control
 gen_install
 gen_overrides
+tmpl_files
 

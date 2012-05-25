@@ -9,7 +9,7 @@
 DESTDIR ?= debian/tmp/usr/share/freeswitch/sounds
 spath := en/us/callie
 srate := 48000
-rates := 8000 16000 32000 48000
+rates := 48000
 
 all: binary
 

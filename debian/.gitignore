@@ -5,5 +5,7 @@
 /*.substvars
 /control
 /files
+/postinst
+/prerm
 /freeswitch-*/
 /tmp/
