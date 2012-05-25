@@ -50,6 +50,9 @@ fmt_edit_warning () {
 
 fmt_provides () {
   local pvds="$base" tmp="${sound%-*}" tb="$base"
+  if [ "$tmp" = "$sound" ]; then
+    echo "$base" && return
+  fi
   for x in ${tmp//-/ }; do
     tb="$tb-$x"
     pvds="$pvds, $tb"
