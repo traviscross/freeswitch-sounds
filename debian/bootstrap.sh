@@ -30,6 +30,14 @@ xread () {
   return $ret
 }
 
+reverse () {
+  local acc=""
+  for x in $1; do
+    acc="$x $acc"
+  done
+  echo "${acc:0:$((${#acc}-1))}"
+}
+
 wrap () {
   local fl=true
   echo "$1" | fold -s -w 69 | while xread l; do
@@ -76,7 +84,7 @@ list_vpkgs () {
 
 fmt_depends () {
   local deps=""
-  for x in $(list_pkgs); do
+  for x in $(reverse "$(list_pkgs)"); do
     deps="$deps | $x (= \${binary:Version})"
   done
   echo "${deps:3}"
