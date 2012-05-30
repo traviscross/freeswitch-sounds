@@ -4,8 +4,9 @@ freeswitch-sounds-en-us-callie for Debian
 Build this with:
 
   ./debian/bootstrap.sh
-  uscan --rename
-  tar xvf ../freeswitch-sounds-*.orig.tar.gz
-  fakeroot make -f debian/rules binary
+  ./debian/rules get-orig-source
+  tar -xv --strip-components=1 -f freeswitch-sounds-*_*.orig.tar.xz
+  mv freeswitch-sounds-*_*.orig.tar.xz ../
+  dpkg-buildpackage -uc -us -Zxz -z9
 
- -- Travis Cross <tc@traviscross.com>, Thu, 24 May 2012 13:57:23 +0000
+ -- Travis Cross <tc@traviscross.com>, Wed, 30 May 2012 15:23:59 +0000
