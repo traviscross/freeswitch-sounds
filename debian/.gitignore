@@ -4,6 +4,7 @@
 /*.log
 /*.substvars
 /control
+/copyright
 /files
 /postinst
 /prerm

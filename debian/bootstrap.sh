@@ -152,7 +152,7 @@ tmpl () {
 }
 
 tmpl_files () {
-  for x in postinst prerm rules watch; do
+  for x in copyright postinst prerm rules watch; do
     tmpl $x
   done
   chmod +x rules
