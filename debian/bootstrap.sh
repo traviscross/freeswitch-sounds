@@ -3,10 +3,10 @@
 ##### Author: Travis Cross <tc@traviscross.com>
 
 base="freeswitch-sounds"
-sound="$(dpkg-parsechangelog | grep '^Source' | awk '{print $2}' | sed -e "s/${base}-//")"
-path="$(echo "$sound" | sed -e 's:-:/:g')"
 sound_name="US English Callie"
 rate="48000"
+sound="$(dpkg-parsechangelog | grep '^Source' | awk '{print $2}' | sed -e "s/${base}-//")"
+path="$(echo "$sound" | sed -e 's:-:/:g')"
 version="$(dpkg-parsechangelog | grep ^Version | awk '{print $2}' | cut -d'-' -f1)"
 
 #### lib
@@ -60,7 +60,7 @@ fmt_provides () {
 fmt_control () {
   fmt_edit_warning
   cat <<EOF
-Source: freeswitch-sounds-$sound
+Source: $base-$sound
 Section: comm
 Priority: optional
 Maintainer: Travis Cross <tc@traviscross.com>
