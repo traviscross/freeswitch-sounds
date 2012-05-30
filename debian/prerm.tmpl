@@ -8,7 +8,7 @@ spath=__SPATH__
 
 case "$1" in
   remove|upgrade|deconfigure)
-    for r in 8000 16000 32000; do
+    for r in 8000 16000 32000 48000; do
       echo "Removing sounds at $r Hz..." >&2
       for d in $spath/*; do
         [ -d $d ] || continue
