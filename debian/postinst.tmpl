@@ -13,14 +13,14 @@ case "$1" in
       for d in $spath/*; do
         [ -d $d ] || continue
         mkdir -p $d/$r
-        for f in $d/*.flac; do
+        for f in $d/flac/*.flac; do
           [ -f $f ] || continue
           w=${f%.flac}.wav
           flac -s -d -c $f | sox -t wav - -c1 -r$r -b16 -e signed-integer $d/$r/${w##*/}
         done
       done
     done
-    for d in $spath/*; do rm -f $d/*.flac; done
+    for d in $spath/*; do rm -rf $d/flac; done
     ;;
   abort-upgrade|abort-remove|abort-deconfigure)
     ;;

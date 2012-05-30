@@ -18,8 +18,8 @@ all: binary
 
 sdirs := $(wildcard $(spath)/*)
 swavs:= $(foreach dir,$(sdirs),$(wildcard $(dir)/*.wav))
-ddirs := $(addprefix $(DESTDIR)/,$(sdirs))
-dwavs := $(addprefix $(DESTDIR)/,$(swavs))
+ddirs := $(addsuffix /flac,$(addprefix $(DESTDIR)/,$(sdirs)))
+dwavs := $(foreach wav,$(addprefix $(DESTDIR)/,$(swavs)),$(dir $(wav))flac/$(notdir $(wav)))
 dflacs := $(patsubst %.wav,%.flac,$(dwavs))
 
 define defdir
@@ -28,7 +28,7 @@ $(1):
 endef
 
 define defwav
-$(DESTDIR)/$(1): $(1) $(DESTDIR)/$(dir $(1))
+$(DESTDIR)/$(dir $(1))flac/$(notdir $(1)): $(1) $(DESTDIR)/$(dir $(1))flac
 	sox $$< -c1 -b16 -r48000 -e signed-integer $$@
 endef
 
