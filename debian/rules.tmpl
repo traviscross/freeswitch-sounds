@@ -18,34 +18,35 @@ all: binary
 
 sdirs := $(wildcard $(spath)/*)
 swavs:= $(foreach dir,$(sdirs),$(wildcard $(dir)/*.wav))
-ddirs := $(addsuffix /flac,$(addprefix $(DESTDIR)/,$(sdirs)))
-dwavs := $(foreach wav,$(addprefix $(DESTDIR)/,$(swavs)),$(dir $(wav))flac/$(notdir $(wav)))
-dflacs := $(patsubst %.wav,%.flac,$(dwavs))
+ddirs := $(addsuffix /flac,$(addprefix build/,$(sdirs)))
+dflacs := $(patsubst %.wav,%.flac,$(foreach wav,$(swavs),build/$(dir $(wav))flac/$(notdir $(wav))))
+iflacs := $(patsubst build/%,$(DESTDIR)/%,$(dflacs))
 
 define defdir
-$(1):
-	mkdir -p $$@
-endef
-
-define defwav
-$(DESTDIR)/$(dir $(1))flac/$(notdir $(1)): $(1) $(DESTDIR)/$(dir $(1))flac
-	sox $$< -c1 -b16 -r48000 -e signed-integer $$@
+$(1)/.dir:
+	mkdir -p $$(@D)
+	touch $$@
+.PRECIOUS: $(1)/.dir
 endef
 
 define defflac
-$(patsubst %.wav,%.flac,$(1)): $(1)
-	flac -f -o $$@ -s --lax --delete-input-file -8 $$<
+.SECONDEXPANSION:
+build/$(dir $(1))flac/$(basename $(notdir $(1))).flac: $(1) $$$$(@D)/.dir
+	sox $$< -c1 -b16 -r48000 -e signed-integer -t wav - | flac -f -o $$@ -s --lax -8 -
 endef
 
 $(foreach dir,$(ddirs),$(eval $(call defdir,$(dir))))
-$(foreach wav,$(swavs),$(eval $(call defwav,$(wav))))
-$(foreach wav,$(dwavs),$(eval $(call defflac,$(wav))))
+$(foreach wav,$(swavs),$(eval $(call defflac,$(wav))))
+
+install: build
+	for x in build/*/*/*/*/flac; do install -d $(DESTDIR)/$${x#*/}; done
+	for x in build/*/*/*/*/flac/*; do install -m0644 $$x $(DESTDIR)/$${x#*/}; done
 
 #### debian
 
 binary: binary-indep
 binary-arch:
-binary-indep: build-indep
+binary-indep: install
 	dh_testdir -i
 	dh_testroot -i
 	dh_installdirs -i
