@@ -3,11 +3,11 @@
 ##### Author: Travis Cross <tc@traviscross.com>
 
 base="freeswitch-sounds"
-sound="en-us-callie"
-path="en/us/callie"
+sound="$(dpkg-parsechangelog | grep '^Source' | awk '{print $2}' | sed -e "s/${base}-//")"
+path="$(echo "$sound" | sed -e 's:-:/:g')"
 sound_name="US English Callie"
 rate="48000"
-version="1.0.18"
+version="$(dpkg-parsechangelog | grep ^Version | awk '{print $2}' | cut -d'-' -f1)"
 
 #### lib
 
