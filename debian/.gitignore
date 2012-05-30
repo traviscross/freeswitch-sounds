@@ -8,5 +8,6 @@
 /postinst
 /prerm
 /rules
+/watch
 /freeswitch-*/
 /tmp/
