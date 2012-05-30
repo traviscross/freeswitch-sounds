@@ -64,6 +64,7 @@ get-orig-source:
 	wget -O $(tmpdir)/upstream.tgz "http://files.freeswitch.org/$(pkg)-$(srate)-$(ver).tar.gz"
 	mkdir -p $(tmpdir)/$(pkg)-$(ver)
 	tar -x -C $(tmpdir)/$(pkg)-$(ver) -f $(tmpdir)/upstream.tgz
+	for x in $(tmpdir)/$(pkg)-$(ver)/*/*/*/*; do for y in $$x/*; do mv $$y/* $$x; rmdir $$y; done; done
 	tar -c -C $(tmpdir) -f $(pkg)_$(ver).orig.tar $(pkg)-$(ver)
 	xz -9ev $(pkg)_$(ver).orig.tar
 	rm -rf $(tmpdir)
