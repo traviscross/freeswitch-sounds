@@ -11,30 +11,35 @@ spath := __PATH__
 srate := __RATE__
 ver := __VERSION__
 pkg := __PKG_NAME__
-rates := 48000
 
 all: binary
 
 #### build sounds
 
-dirs := $(wildcard $(spath)/*)
-sdirs := $(addsuffix /$(srate), $(dirs))
-ddirs := $(addprefix $(DESTDIR)/,$(foreach rate,$(rates),$(addsuffix /$(rate), $(dirs))))
-sfiles := $(foreach dir,$(sdirs),$(wildcard $(dir)/*.wav))
-dfiles := $(addprefix $(DESTDIR)/,$(foreach rate,$(rates),$(subst /$(srate)/,/$(rate)/,$(sfiles))))
+sdirs := $(wildcard $(spath)/*)
+swavs:= $(foreach dir,$(sdirs),$(wildcard $(dir)/*.wav))
+ddirs := $(addprefix $(DESTDIR)/,$(sdirs))
+dwavs := $(addprefix $(DESTDIR)/,$(swavs))
+dflacs := $(patsubst %.wav,%.flac,$(dwavs))
 
 define defdir
-$(DESTDIR)/$(spath)/%/$(1): $(spath)/%/$(srate)
+$(1):
 	mkdir -p $$@
 endef
 
-define deffile
-$(DESTDIR)/$(subst /$(srate)/,/$(2)/,$(1)): $(1) $(DESTDIR)/$(dir $(subst /$(srate)/,/$(2)/,$(1)))
-	sox $$< -r$(2) $$@
+define defwav
+$(DESTDIR)/$(1): $(1) $(DESTDIR)/$(dir $(1))
+	sox $$< -c1 -b16 -r48000 -e signed-integer $$@
 endef
 
-$(foreach rate,$(rates),$(eval $(call defdir,$(rate))))
-$(foreach rate,$(rates),$(foreach snd,$(sfiles),$(eval $(call deffile,$(snd),$(rate)))))
+define defflac
+$(patsubst %.wav,%.flac,$(1)): $(1)
+	flac -f -o $$@ -s --lax --delete-input-file -8 $$<
+endef
+
+$(foreach dir,$(ddirs),$(eval $(call defdir,$(dir))))
+$(foreach wav,$(swavs),$(eval $(call defwav,$(wav))))
+$(foreach wav,$(dwavs),$(eval $(call defflac,$(wav))))
 
 #### debian
 
@@ -57,7 +62,7 @@ binary-indep: build-indep
 
 build: build-indep
 build-arch:
-build-indep: $(dfiles)
+build-indep: $(dflacs)
 
 get-orig-source:
 	$(eval tmpdir := $(shell mktemp -d --tmpdir=.))

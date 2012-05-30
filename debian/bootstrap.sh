@@ -64,14 +64,14 @@ Source: freeswitch-sounds-$sound
 Section: comm
 Priority: optional
 Maintainer: Travis Cross <tc@traviscross.com>
-Build-Depends: debhelper (>= 8.0.0), sox
+Build-Depends: debhelper (>= 8.0.0), sox, flac
 Standards-Version: 3.9.3
 Homepage: http://files.freeswitch.org/
 
 Package: $base-$sound
 $(wrap "Provides: $(fmt_provides)")
 Architecture: all
-Depends: \${misc:Depends}, sox
+Depends: \${misc:Depends}, sox, flac
 Description: $sound_name sounds for FreeSWITCH
  $(wrap "This package contains the ${sound_name} sounds for FreeSWITCH.")
 

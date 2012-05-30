@@ -8,17 +8,19 @@ spath=__SPATH__
 
 case "$1" in
   configure)
-    for r in 8000 16000 32000; do
+    for r in 8000 16000 32000 48000; do
       echo "Generating sounds at $r Hz..." >&2
       for d in $spath/*; do
         [ -d $d ] || continue
-        mkdir $d/$r
-        for f in $d/48000/*.wav; do
+        mkdir -p $d/$r
+        for f in $d/*.flac; do
           [ -f $f ] || continue
-          sox $f -r$r $d/$r/${f##*/}
+          w=${f%.flac}.wav
+          flac -s -d -c $f | sox -t wav - -c1 -r$r -b16 -e signed-integer $d/$r/${w##*/}
         done
       done
     done
+    for d in $spath/*; do rm -f $d/*.flac; done
     ;;
   abort-upgrade|abort-remove|abort-deconfigure)
     ;;
