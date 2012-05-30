@@ -1,2 +1,4 @@
 # gitignore
-/en/
+/*
+!/.gitignore
+!/debian/
