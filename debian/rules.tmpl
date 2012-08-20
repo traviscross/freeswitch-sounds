@@ -11,6 +11,7 @@ spath := __PATH__
 srate := __RATE__
 ver := __VERSION__
 pkg := __PKG_NAME__
+upkg := __UPKG_NAME__
 
 all: binary
 
@@ -67,7 +68,7 @@ build-indep: $(dflacs)
 
 get-orig-source:
 	$(eval tmpdir := $(shell mktemp -d --tmpdir=.))
-	wget -O $(tmpdir)/upstream.tgz "http://files.freeswitch.org/$(pkg)-$(srate)-$(ver).tar.gz"
+	wget -O $(tmpdir)/upstream.tgz "http://files.freeswitch.org/$(upkg)-$(srate)-$(ver).tar.gz"
 	mkdir -p $(tmpdir)/$(pkg)-$(ver)
 	tar -x -C $(tmpdir)/$(pkg)-$(ver) -f $(tmpdir)/upstream.tgz
 	for x in $(tmpdir)/$(pkg)-$(ver)/*/*/*/*; do for y in $$x/*; do mv $$y/* $$x; rmdir $$y; done; done

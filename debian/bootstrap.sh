@@ -3,11 +3,15 @@
 ##### Author: Travis Cross <tc@traviscross.com>
 
 base="freeswitch-sounds"
+upstream_base="freeswitch-sounds"
 sound_name="US English Callie"
 rate="48000"
 sound="$(dpkg-parsechangelog | grep '^Source' | awk '{print $2}' | sed -e "s/${base}-//")"
+upstream_sound="$sound"
 path="$(echo "$sound" | sed -e 's:-:/:g')"
 version="$(dpkg-parsechangelog | grep ^Version | awk '{print $2}' | cut -d'-' -f1)"
+pkg_name="${base}${sound:+-$sound}"
+upkg_name="${upstream_base}${upstream_sound:+-$upstream_sound}"
 
 #### lib
 
@@ -147,7 +151,8 @@ gen_overrides () {
 tmpl () {
   sed \
     -e "s:__RATE__:${rate}:" \
-    -e "s:__PKG_NAME__:${base}-${sound}:" \
+    -e "s:__PKG_NAME__:${pkg_name}:" \
+    -e "s:__UPKG_NAME__:${upkg_name}:" \
     -e "s:__PATH__:${path}:" \
     -e "s:__SPATH__:/usr/share/freeswitch/sounds/${path}:" \
     -e "s:__VERSION__:${version}:" \
