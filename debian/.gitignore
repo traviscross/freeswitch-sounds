@@ -3,8 +3,10 @@
 /*.lintian-overrides
 /*.log
 /*.substvars
+/changelog
 /control
 /copyright
+/copyright.tmpl
 /files
 /postinst
 /prerm

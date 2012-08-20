@@ -2,22 +2,41 @@
 ##### -*- mode:shell-script; indent-tabs-mode:nil; sh-basic-offset:2 -*-
 ##### Author: Travis Cross <tc@traviscross.com>
 
-base="freeswitch-sounds"
-upstream_base="freeswitch-sounds"
-sound_name="US English Callie"
-rate="48000"
-sound="$(dpkg-parsechangelog | grep '^Source' | awk '{print $2}' | sed -e "s/${base}-//")"
-upstream_sound="$sound"
-path="$(echo "$sound" | sed -e 's:-:/:g')"
-version="$(dpkg-parsechangelog | grep ^Version | awk '{print $2}' | cut -d'-' -f1)"
-pkg_name="${base}${sound:+-$sound}"
-upkg_name="${upstream_base}${upstream_sound:+-$upstream_sound}"
-
-#### lib
+#### directory independence
 
 ddir="."
 [ -n "${0%/*}" ] && ddir="${0%/*}"
 cd $ddir
+
+#### argument handling
+
+usage () {
+  echo "usage: $0 -p <source-package-name>" 1>&2
+  exit 1
+}
+
+pkg=""
+while getopts "p:" o; do
+  case "$o" in
+    p) pkg="$OPTARG" ;;
+  esac
+done
+shift $(($OPTIND-1))
+
+if [ -z "$pkg" ]; then
+  usage
+fi
+
+for x in copyright.tmpl changelog; do
+  cp -a $pkg.$x $x
+done
+
+. ./${pkg}.params
+version="$(dpkg-parsechangelog -lchangelog | grep ^Version | awk '{print $2}' | cut -d'-' -f1)"
+pkg_name="${base}${sound:+-$sound}"
+upkg_name="${upstream_base}${upstream_sound:+-$upstream_sound}"
+
+#### lib
 
 err () {
   echo "$0 error: $1" >&2
