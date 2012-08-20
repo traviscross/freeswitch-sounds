@@ -41,8 +41,15 @@ $(foreach dir,$(ddirs),$(eval $(call defdir,$(dir))))
 $(foreach wav,$(swavs),$(eval $(call defflac,$(wav))))
 
 install: build
-	for x in build/*/*/*/*/flac; do install -d $(DESTDIR)/$${x#*/}; done
-	for x in build/*/*/*/*/flac/*; do install -m0644 $$x $(DESTDIR)/$${x#*/}; done
+	if [ -d build/music ]; then \
+	  install -d $(DESTDIR)/music/$(sound)/flac; \
+	  for x in build/music/$(sound)/flac/*; do \
+	    install -m0644 $$x $(DESTDIR)/$${x#*/}; \
+	  done; \
+	else \
+	  for x in build/*/*/*/*/flac; do install -d $(DESTDIR)/$${x#*/}; done; \
+	  for x in build/*/*/*/*/flac/*; do install -m0644 $$x $(DESTDIR)/$${x#*/}; done; \
+	fi
 
 #### debian
 
