@@ -12,6 +12,7 @@ srate := __RATE__
 ver := __VERSION__
 pkg := __PKG_NAME__
 upkg := __UPKG_NAME__
+sound := __SOUND__
 
 all: binary
 
@@ -72,8 +73,7 @@ get-orig-source:
 	mkdir -p $(tmpdir)/$(pkg)-$(ver)
 	tar -x -C $(tmpdir)/$(pkg)-$(ver) -f $(tmpdir)/upstream.tgz
 	if [ -d $(tmpdir)/$(pkg)-$(ver)/music ]; then \
-	  mv $(tmpdir)/$(pkg)-$(ver)/music/$(srate)/* $(tmpdir)/$(pkg)-$(ver)/music; \
-	  rmdir $(tmpdir)/$(pkg)-$(ver)/music/$(srate); \
+	  mv $(tmpdir)/$(pkg)-$(ver)/music/$(srate) $(tmpdir)/$(pkg)-$(ver)/music/$(sound); \
 	else \
 	  for x in $(tmpdir)/$(pkg)-$(ver)/*/*/*/*; do \
 	    for y in $$x/*; do mv $$y/* $$x; rmdir $$y; done; \

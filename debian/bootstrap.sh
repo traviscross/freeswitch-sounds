@@ -172,6 +172,7 @@ tmpl () {
     -e "s:__RATE__:${rate}:" \
     -e "s:__PKG_NAME__:${pkg_name}:" \
     -e "s:__UPKG_NAME__:${upkg_name}:" \
+    -e "s:__SOUND__:${sound}:" \
     -e "s:__PATH__:${path}:" \
     -e "s:__SPATH__:/usr/share/freeswitch/sounds/${path}:" \
     -e "s:__VERSION__:${version}:" \
