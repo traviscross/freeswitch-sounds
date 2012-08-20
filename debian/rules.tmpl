@@ -71,7 +71,10 @@ get-orig-source:
 	wget -O $(tmpdir)/upstream.tgz "http://files.freeswitch.org/$(upkg)-$(srate)-$(ver).tar.gz"
 	mkdir -p $(tmpdir)/$(pkg)-$(ver)
 	tar -x -C $(tmpdir)/$(pkg)-$(ver) -f $(tmpdir)/upstream.tgz
-	if [ ! -d $(tmpdir)/$(pkg)-$(ver)/music ]; then \
+	if [ -d $(tmpdir)/$(pkg)-$(ver)/music ]; then \
+	  mv $(tmpdir)/$(pkg)-$(ver)/music/$(srate)/* $(tmpdir)/$(pkg)-$(ver)/music; \
+	  rmdir $(tmpdir)/$(pkg)-$(ver)/music/$(srate); \
+	else \
 	  for x in $(tmpdir)/$(pkg)-$(ver)/*/*/*/*; do \
 	    for y in $$x/*; do mv $$y/* $$x; rmdir $$y; done; \
 	  done; \
