@@ -1,3 +1,9 @@
+freeswitch-sounds-en-us-callie (1.0.21-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Travis Cross <tc@traviscross.com>  Thu, 20 Sep 2012 20:41:07 +0000
+
 freeswitch-sounds-en-us-callie (1.0.18-3) unstable; urgency=low
 
   * Minor changes.
